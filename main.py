@@ -3,6 +3,7 @@ from python_speech_features import delta
 from python_speech_features import logfbank
 import numpy as np
 import scipy.io.wavfile as wav
+import os
 
 
 
@@ -14,10 +15,38 @@ def getMfccs(fileName):
 
     allMfccs = np.concatenate((basicMfccfeatures, deltaMfccFeatures, doubleDeltaMFCCFeatures), axis=1) #this will return (#frames, 39) features
     return allMfccs
-if __name__ == '__main__':
 
-    mfcc = getMfccs('testSound.wav')
-    print(mfcc[0,:]) # printing first row ( first feature vector)
-    #fbankFeatures = logfbank(signalSamples, samplingRate)
+
+#this function will return every class, and the the wav files related to it
+# as a dictonary (key is the path of the class, the value is list of files names)
+def getTrainingData(folerPath='.\\training_data'):
+    rootDir = folerPath
+
+    classes = {}
+    for dirName, subdirList, fileList in os.walk(rootDir):
+        classes[dirName]  =[]
+        for fileName in fileList:
+            classes[dirName].append(fileName)
+
+    classes.pop(rootDir) # remove the first element (root path)
+    return classes
+
+
+def getTrainingDataMFCCs(folerPath='.\\training_data'):
+    classesWithMfcc = {}
+    traingDataDictonary = getTrainingData(folerPath)
+    for classpath, filesName in traingDataDictonary.items():
+        classesWithMfcc[classpath] = []
+        for fileName in filesName:
+            filePath = classpath + '\\' + fileName
+            print('reading file %s ...' % filePath)
+            currentFileMfccs = getMfccs(filePath)
+           # print(currentFileMfccs[0, :])  # print first row of mfcc
+            classesWithMfcc[classpath].append(currentFileMfccs)
+    return classesWithMfcc
+
+if __name__ == '__main__':
+    x = getTrainingDataMFCCs(folerPath='.\\training_data')
+
 
 
