@@ -25,12 +25,12 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     :param winfunc: the analysis window to apply to each frame. By default no window is applied. You can use numpy window functions here e.g. winfunc=numpy.hamming
     :returns: A numpy array of size (NUMFRAMES by numcep) containing features. Each row holds 1 feature vector.
     """
-    feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
-    feat = numpy.log(feat)
-    feat = dct(feat, type=2, axis=1, norm='ortho')[:,:numcep]
-    feat = lifter(feat,ceplifter)
-    if appendEnergy: feat[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
-    return feat
+    features,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph,winfunc)
+    features = numpy.log(features)
+    features = dct(features, type=2, axis=1, norm='ortho')[:,:numcep]
+    features = lifter(features,ceplifter)
+    if appendEnergy: features[:,0] = numpy.log(energy) # replace first cepstral coefficient with log of frame energy
+    return features
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
@@ -58,10 +58,10 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     energy = numpy.where(energy == 0,numpy.finfo(float).eps,energy) # if energy is zero, we get problems with log
 
     fb = get_filterbanks(nfilt,nfft,samplerate,lowfreq,highfreq)
-    feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
-    feat = numpy.where(feat == 0,numpy.finfo(float).eps,feat) # if feat is zero, we get problems with log
+    features = numpy.dot(pspec,fb.T) # compute the filterbank energies
+    features = numpy.where(features == 0,numpy.finfo(float).eps,features) # if features is zero, we get problems with log
 
-    return feat,energy
+    return features,energy
 
 def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
           nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
@@ -78,8 +78,8 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     :param preemph: apply preemphasis filter with preemph as coefficient. 0 is no filter. Default is 0.97.
     :returns: A numpy array of size (NUMFRAMES by nfilt) containing features. Each row holds 1 feature vector.
     """
-    feat,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
-    return numpy.log(feat)
+    features,energy = fbank(signal,samplerate,winlen,winstep,nfilt,nfft,lowfreq,highfreq,preemph)
+    return numpy.log(features)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
         nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
@@ -105,10 +105,10 @@ def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     pspec = numpy.where(pspec == 0,numpy.finfo(float).eps,pspec) # if things are all zeros we get problems
 
     fb = get_filterbanks(nfilt,nfft,samplerate,lowfreq,highfreq)
-    feat = numpy.dot(pspec,fb.T) # compute the filterbank energies
+    features = numpy.dot(pspec,fb.T) # compute the filterbank energies
     R = numpy.tile(numpy.linspace(1,samplerate/2,numpy.size(pspec,1)),(numpy.size(pspec,0),1))
 
-    return numpy.dot(pspec*R,fb.T) / feat
+    return numpy.dot(pspec*R,fb.T) / features
 
 def hz2mel(hz):
     """Convert a value in Hertz to Mels
@@ -172,19 +172,19 @@ def lifter(cepstra, L=22):
         # values of L <= 0, do nothing
         return cepstra
 
-def delta(feat, N):
+def delta(features, N):
     """Compute delta features from a feature vector sequence.
 
-    :param feat: A numpy array of size (NUMFRAMES by number of features) containing features. Each row holds 1 feature vector.
+    :param features: A numpy array of size (NUMFRAMES by number of features) containing features. Each row holds 1 feature vector.
     :param N: For each frame, calculate delta features based on preceding and following N frames
     :returns: A numpy array of size (NUMFRAMES by number of features) containing delta features. Each row holds 1 delta feature vector.
     """
     if N < 1:
         raise ValueError('N must be an integer >= 1')
-    NUMFRAMES = len(feat)
+    NUMFRAMES = len(features)
     denominator = 2 * sum([i**2 for i in range(1, N+1)])
-    delta_feat = numpy.empty_like(feat)
-    padded = numpy.pad(feat, ((N, N), (0, 0)), mode='edge')   # padded version of feat
+    delta_feat = numpy.empty_like(features)
+    padded = numpy.pad(features, ((N, N), (0, 0)), mode='edge')   # padded version of features
     for t in range(NUMFRAMES):
         delta_feat[t] = numpy.dot(numpy.arange(-N, N+1), padded[t : t+2*N+1]) / denominator   # [t : t+2*N+1] == [(N+t)-N : (N+t)+N+1]
     return delta_feat
