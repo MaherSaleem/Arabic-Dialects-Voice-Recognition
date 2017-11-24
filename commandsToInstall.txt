@@ -1,3 +1,5 @@
 1) go to windows search, then anaconda, then type
 conda install scipy
 conda install -c anaconda scikit-learn
+conda install -c conda-forge matplotlib
+
