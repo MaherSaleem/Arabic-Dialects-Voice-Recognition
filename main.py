@@ -6,7 +6,6 @@ import scipy.io.wavfile as wav
 import os
 
 
-
 def getMfccs(fileName):
     (samplingRate, signalSamples) = wav.read(fileName) #reading the file
     basicMfccfeatures = mfcc(signalSamples, samplingRate) # this will return (#frames, 13) features which are the 12 basic MFCCs + energy
