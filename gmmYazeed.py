@@ -1,6 +1,6 @@
 # Author: Ron Weiss <ronweiss@gmail.com>, Gael Varoquaux
 # Modified by Thierry Guillemot <thierry.guillemot.work@gmail.com>
-# License: BSD 3 clause
+# License: BSD 2 clause
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
