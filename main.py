@@ -9,7 +9,8 @@ import matplotlib as mpl
 from new import calcaulteGMMForEachClass
 from sklearn import mixture
 from sklearn.mixture import GaussianMixture
-
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_recall_fscore_support
 
 def createListWithSpecificNumber(i, maxLen):
     a = []
@@ -42,6 +43,29 @@ def getTrainingData(folerPath='.\\training_data'):
 
     classes.pop(rootDir)  # remove the first element (root path)
     return classes
+
+def print_confusion_matrix(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
+    """pretty print for confusion matrixes"""
+    columnwidth = max([len(x) for x in labels] + [5])  # 5 is value length
+    empty_cell = " " * columnwidth
+    # Print header
+    print("    " + empty_cell, end=" ")
+    for label in labels:
+        print("%{0}s".format(columnwidth) % label, end=" ")
+    print()
+    # Print rows
+    for i, label1 in enumerate(labels):
+        print("    %{0}s".format(columnwidth) % label1, end=" ")
+        for j in range(len(labels)):
+            cell = "%{0}.1f".format(columnwidth) % cm[i, j]
+            if hide_zeroes:
+                cell = cell if float(cm[i, j]) != 0 else empty_cell
+            if hide_diagonal:
+                cell = cell if i != j else empty_cell
+            if hide_threshold:
+                cell = cell if cm[i, j] > hide_threshold else empty_cell
+            print(cell, end=" ")
+        print()
 
 
 def getTrainingDataMFCCs(folerPath='.\\training_data'):
@@ -101,6 +125,8 @@ if __name__ == '__main__':
 
     testingDataMfcc = getTestingDataMFCCs(folerPath='.\\testing_data')
 
+    y_true = []
+    y_pred = []
     for classLbl, filesMfcc in testingDataMfcc.items():
         for fileMfcc in filesMfcc:
             predictedClassesProbability = []
@@ -111,5 +137,18 @@ if __name__ == '__main__':
                 print(" probability for class '" + label.split("\\")[-1] + "' is: " + str(np.amax(gmm.predict_proba(fileMfcc), axis=1).mean()))
             predictedClass = predictedClassesProbability.index(max(predictedClassesProbability))
             print("predicted class is ' " + str(predictedClass) + "'" + " with probability: " + str(predictedClassesProbability[predictedClass]))
-            print ("    True class " + classLbl.split("\\")[-1] + ", predicted class "+ str(predictedClass))
+            currentTrueClass = classLbl.split("\\")[-1]
+            print("    True class " + currentTrueClass + ", predicted class "+ str(predictedClass))
             print("---------------------------------------------------------------")
+            y_true.append(int(currentTrueClass))
+            y_pred.append(predictedClass)
+
+    #https://gist.github.com/zachguo/10296432
+    # http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html
+    print("Concussion Matrix:")
+    print_confusion_matrix(confusion_matrix(y_true=y_true, y_pred=y_pred), ['0', '1', '2']) # 0,1,2 are the labels TODO make it generic
+    # http://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_fscore_support.html
+    precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='weighted')
+    print('precision is : ', precision)
+    print('recall is : ', recall)
+    print('fscore is : ', fscore)
