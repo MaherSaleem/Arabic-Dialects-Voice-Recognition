@@ -51,6 +51,7 @@ def calcaulteGMMForEachClass(X, start = 1,end = 7) -> mixture.GaussianMixture :
                 best_component = n_components
                 best_cv_type = cv_type
 
+    print("Best number of Gaussians is :", n_components)
     bic = np.array(bic)
     color_iter = itertools.cycle(['navy', 'turquoise', 'cornflowerblue',
                                   'darkorange'])

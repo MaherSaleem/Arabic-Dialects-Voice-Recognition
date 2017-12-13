@@ -6,7 +6,7 @@ from python_speech_features import sigproc
 from scipy.fftpack import dct
 
 def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
-         nfilt=24,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
+         nfilt=24,nfft=2048,lowfreq=0,highfreq=None,preemph=0.97,ceplifter=22,appendEnergy=True,
          winfunc=lambda x:numpy.ones((x,))):
     """Compute MFCC features from an audio signal.
 
@@ -33,7 +33,7 @@ def mfcc(signal,samplerate=16000,winlen=0.025,winstep=0.01,numcep=13,
     return features
 
 def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+          nfilt=26,nfft=2048,lowfreq=0,highfreq=None,preemph=0.97,
           winfunc=lambda x:numpy.ones((x,))):
     """Compute Mel-filterbank energy features from an audio signal.
 
@@ -64,7 +64,7 @@ def fbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     return features,energy
 
 def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-          nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97):
+          nfilt=26,nfft=2048,lowfreq=0,highfreq=None,preemph=0.97):
     """Compute log Mel-filterbank energy features from an audio signal.
 
     :param signal: the audio signal from which to compute features. Should be an N*1 array
@@ -82,7 +82,7 @@ def logfbank(signal,samplerate=16000,winlen=0.025,winstep=0.01,
     return numpy.log(features)
 
 def ssc(signal,samplerate=16000,winlen=0.025,winstep=0.01,
-        nfilt=26,nfft=512,lowfreq=0,highfreq=None,preemph=0.97,
+        nfilt=26,nfft=2048,lowfreq=0,highfreq=None,preemph=0.97,
         winfunc=lambda x:numpy.ones((x,))):
     """Compute Spectral Subband Centroid features from an audio signal.
 
@@ -126,7 +126,7 @@ def mel2hz(mel):
     """
     return 700*(10**(mel/2595.0)-1)
 
-def get_filterbanks(nfilt=20,nfft=512,samplerate=16000,lowfreq=0,highfreq=None):
+def get_filterbanks(nfilt=20,nfft=2048,samplerate=16000,lowfreq=0,highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 

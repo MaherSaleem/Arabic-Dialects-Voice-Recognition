@@ -128,13 +128,20 @@ if __name__ == '__main__':
     y_true = []
     y_pred = []
     for classLbl, filesMfcc in testingDataMfcc.items():
+
         for fileMfcc in filesMfcc:
             predictedClassesProbability = []
             predictedClass = 0
             print("Testing file: " + classLbl)
             for label, gmm in gmms.items():
-                predictedClassesProbability.append(np.amax(gmm.predict_proba(fileMfcc), axis=0).mean())
-                print(" probability for class '" + label.split("\\")[-1] + "' is: " + str(np.amax(gmm.predict_proba(fileMfcc), axis=1).mean()))
+                print(gmm.weights_)
+                gaussiansPrdections = gmm.predict_proba(fileMfcc)
+                gmmWeights = gmm.weights_
+                t = np.dot(gaussiansPrdections, gmmWeights)
+                finalScore = np.mean(t)
+                predictedClassesProbability.append(finalScore)
+                print(" probability for class '" + label.split("\\")[-1] + "' is: " + str(finalScore))
+            exit(0)
             predictedClass = predictedClassesProbability.index(max(predictedClassesProbability))
             print("predicted class is ' " + str(predictedClass) + "'" + " with probability: " + str(predictedClassesProbability[predictedClass]))
             currentTrueClass = classLbl.split("\\")[-1]
