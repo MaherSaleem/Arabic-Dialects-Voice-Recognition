@@ -1,11 +1,22 @@
 import numpy as np
 import itertools
-
 from scipy import linalg
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
 from sklearn import mixture
+
+
+"""
+    *************************************************************************
+    This class contains methods to generate GMMs for the project and a drawing
+    method to draw an ellipse on each gaussian data points
+    *************************************************************************
+"""
+
+
+"""
+    Draw ellipses on the data visualization
+"""
 def make_ellipses(gmm, ax):
     colors = ['navy', 'turquoise', 'darkorange']
 
@@ -21,7 +32,9 @@ def make_ellipses(gmm, ax):
         v, w = np.linalg.eigh(covariances)
         u = w[0] / np.linalg.norm(w[0])
         angle = np.arctan2(u[1], u[0])
-        angle = 180 * angle / np.pi  # convert to degrees
+
+        # convert to degrees
+        angle = 180 * angle / np.pi
         v = 2. * np.sqrt(2.) * np.sqrt(v)
         ell = mpl.patches.Ellipse(gmm.means_[n, :2], v[0], v[1],
                                   180 + angle, color=color)
@@ -30,7 +43,13 @@ def make_ellipses(gmm, ax):
         ax.add_artist(ell)
 
 
-def calcaulteGMMForEachClass(X, start = 1,end = 7) -> mixture.GaussianMixture :
+"""
+    Calculate the best number of gaussian GMM for each class based on
+    Bayesian information criterion for the current model on the input X
+    (using the bic() method in GMM class). The returned value form method
+    is the calculated GMM model.
+"""
+def calcaulteGMMForEachClass(X, start=1, end=7) -> mixture.GaussianMixture:
     lowest_bic = np.infty
     bic = []
     best_gmm = []
@@ -51,7 +70,6 @@ def calcaulteGMMForEachClass(X, start = 1,end = 7) -> mixture.GaussianMixture :
                 best_component = n_components
                 best_cv_type = cv_type
 
-    print("Best number of Gaussians is :", n_components)
     bic = np.array(bic)
     color_iter = itertools.cycle(['navy', 'turquoise', 'cornflowerblue',
                                   'darkorange'])
@@ -63,13 +81,13 @@ def calcaulteGMMForEachClass(X, start = 1,end = 7) -> mixture.GaussianMixture :
     for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
         xpos = np.array(n_components_range) + .2 * (i - 2)
         bars.append(plt.bar(xpos, bic[i * len(n_components_range):
-                                      (i + 1) * len(n_components_range)],
+        (i + 1) * len(n_components_range)],
                             width=.2, color=color))
     plt.xticks(n_components_range)
     plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
     plt.title('BIC score per model')
-    xpos = np.mod(bic.argmin(), len(n_components_range)) + .65 +\
-        .2 * np.floor(bic.argmin() / len(n_components_range))
+    xpos = np.mod(bic.argmin(), len(n_components_range)) + .65 + \
+           .2 * np.floor(bic.argmin() / len(n_components_range))
     plt.text(xpos, bic.min() * 0.97 + .03 * bic.max(), '*', fontsize=14)
     spl.set_xlabel('Number of components')
     spl.legend([b[0] for b in bars], cv_types)
@@ -97,8 +115,7 @@ def calcaulteGMMForEachClass(X, start = 1,end = 7) -> mixture.GaussianMixture :
 
     plt.xticks(())
     plt.yticks(())
-    plt.title('Selected GMM: ' + best_cv_type + ' model, '+str(best_component)+ ' components')
+    plt.title('Selected GMM: ' + best_cv_type + ' model, ' + str(best_component) + ' components')
     plt.subplots_adjust(hspace=.35, bottom=.02)
     # plt.show()
     return best_gmm
-

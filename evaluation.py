@@ -1,33 +1,31 @@
-def accuracy(TP, TN, FP, FN):
-    return (TP + TN) / (TP + TN + FP + FN)
+""""""
+"""
+    *************************************************************************
+    Evaluate the results of testing data using a confusion matrix
+    *************************************************************************
+"""
+def print_confusion_matrix(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
 
+    """pretty print for confusion matrixes"""
+    columnwidth = max([len(x) for x in labels] + [5])  # 5 is value length
+    empty_cell = " " * columnwidth
 
-def precision(TP, FP):
-    return (TP) / (TP + FP)
+    # Print header
+    print("    " + empty_cell, end=" ")
+    for label in labels:
+        print("%{0}s".format(columnwidth) % label, end=" ")
+    print()
 
-
-def recall(TP, FN):
-    return TP / (TP + FN)
-
-
-def f_mesure(p, r):
-    return (2 * p * r) / (p + r)
-
-
-def evaluateResults(TP, TN, FP, FN):
-    print("=== Confusion Matrix ===")
-    print("TP=", TP, "FN=", FN)
-    print("FP=", FP, "TN=", TN)
-    print("=======================")
-    a = accuracy(TP, TN, FP, FN)
-    r = recall(TP, FN)
-    p = precision(TP, FP)
-    print("Accuracy = ", "{0:.3f}".format(a))
-    print("Recall  =", "{0:.3f}".format(r))
-    print("Precision = ", "{0:.3f}".format(p))
-    return float("{0:.3f}".format(a)), float("{0:.3f}".format(r)), float(
-        "{0:.3f}".format(p))  # returned if they needed in any stage
-
-
-if __name__ == '__main__':
-    accuracy, recall, precision = evaluateResults(5, 10, 3, 2)
+    # Print rows
+    for i, label1 in enumerate(labels):
+        print("    %{0}s".format(columnwidth) % label1, end=" ")
+        for j in range(len(labels)):
+            cell = "%{0}.1f".format(columnwidth) % cm[i, j]
+            if hide_zeroes:
+                cell = cell if float(cm[i, j]) != 0 else empty_cell
+            if hide_diagonal:
+                cell = cell if i != j else empty_cell
+            if hide_threshold:
+                cell = cell if cm[i, j] > hide_threshold else empty_cell
+            print(cell, end=" ")
+        print()
