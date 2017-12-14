@@ -68,7 +68,9 @@ if __name__ == '__main__':
     print()
     print('EVALUATION OF SYSTEM')
     print("     Confusion Matrix:")
-    print_confusion_matrix(confusion_matrix(y_true=y_true, y_pred=y_pred), ['0', '1', '2']) # 0,1,2 are the labels TODO make it generic
+    confMatrix = confusion_matrix(y_true=y_true, y_pred=y_pred)
+    numOfClasses = confMatrix.shape[0]
+    print_confusion_matrix(confMatrix, [str(x) for x in range(numOfClasses)])
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average='weighted')
     print('     Precision is : ', precision)
     print('     Recall is : ', recall)
