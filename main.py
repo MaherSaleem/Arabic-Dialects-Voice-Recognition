@@ -1,16 +1,13 @@
 from python_speech_features import mfcc
 from python_speech_features import delta
-from python_speech_features import logfbank
 import numpy as np
 import scipy.io.wavfile as wav
 import os
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 from new import calcaulteGMMForEachClass
-from sklearn import mixture
-from sklearn.mixture import GaussianMixture
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
+import warnings
+import matplotlib.cbook
 
 def createListWithSpecificNumber(i, maxLen):
     a = []
@@ -116,6 +113,10 @@ def getTestingDataMFCCs(folerPath='.\\testing_data'):
 
 
 if __name__ == '__main__':
+
+    warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
+
+
     classes = getTrainingDataMFCCs(folerPath='.\\training_data')
 
     gmms = {}
@@ -134,14 +135,11 @@ if __name__ == '__main__':
             predictedClass = 0
             print("Testing file: " + classLbl)
             for label, gmm in gmms.items():
-                print(gmm.weights_)
-                gaussiansPrdections = gmm.predict_proba(fileMfcc)
-                gmmWeights = gmm.weights_
-                t = np.dot(gaussiansPrdections, gmmWeights)
-                finalScore = np.mean(t)
+                gaussiansPrdections = gmm.score_samples(fileMfcc)
+                finalScore = np.mean(gaussiansPrdections)
                 predictedClassesProbability.append(finalScore)
                 print(" probability for class '" + label.split("\\")[-1] + "' is: " + str(finalScore))
-            exit(0)
+
             predictedClass = predictedClassesProbability.index(max(predictedClassesProbability))
             print("predicted class is ' " + str(predictedClass) + "'" + " with probability: " + str(predictedClassesProbability[predictedClass]))
             currentTrueClass = classLbl.split("\\")[-1]
