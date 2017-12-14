@@ -2,6 +2,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
 import warnings
 import matplotlib.cbook
+import pickle
 
 from GMMs import *
 from MFCC import *
@@ -13,6 +14,9 @@ from evaluation import *
     *************************************************************************
 """
 
+# testing ot training, for serialization of GMM models
+executionMode = False
+
 
 def createListWithSpecificNumber(i, maxLen):
     a = []
@@ -20,25 +24,27 @@ def createListWithSpecificNumber(i, maxLen):
     return a
 
 
-
 if __name__ == '__main__':
 
     warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 
-
     classes = getTrainingDataMFCCs(folerPath='.\\training_data')
 
     gmms = {}
-    count = 0
-    for classLabel,classData in classes.items():
-        gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData), 1, 10)
+    if executionMode:
+        count = 0
+        for classLabel, classData in classes.items():
+            gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData), 1, 10)
+            pickle.dump(gmms, open('gmmModels/classesGMMs', 'wb'))
+    else :
+        gmms = pickle.load(open('gmmModels/classesGMMs', 'rb'))
+
 
     filesNames, testingDataMfcc = getTestingDataMFCCs(folerPath='.\\testing_data')
 
     print('Applying testing data ...')
     print('Result of each file ...')
     print()
-
 
     y_true = []
     y_pred = []
@@ -49,7 +55,7 @@ if __name__ == '__main__':
             predictedClassesProbability = []
             predictedClass = 0
             print("Testing file: " + filesNames[filesNamesCounter])
-            filesNamesCounter +=1
+            filesNamesCounter += 1
             for label, gmm in gmms.items():
                 gaussiansPrdections = gmm.score_samples(fileMfcc)
                 finalScore = np.mean(gaussiansPrdections)
@@ -57,13 +63,13 @@ if __name__ == '__main__':
                 print(" probability for class '" + label.split("\\")[-1] + "' is: " + str(finalScore))
 
             predictedClass = predictedClassesProbability.index(max(predictedClassesProbability))
-            print("predicted class is ' " + str(predictedClass) + "'" + " with probability: " + str(predictedClassesProbability[predictedClass]))
+            print("predicted class is ' " + str(predictedClass) + "'" + " with probability: " + str(
+                predictedClassesProbability[predictedClass]))
             currentTrueClass = classLbl.split("\\")[-1]
-            print("    True class " + currentTrueClass + ", predicted class "+ str(predictedClass))
+            print("    True class " + currentTrueClass + ", predicted class " + str(predictedClass))
             print("---------------------------------------------------------------")
             y_true.append(int(currentTrueClass))
             y_pred.append(predictedClass)
-
 
     print()
     print('EVALUATION OF SYSTEM')
@@ -78,6 +84,6 @@ if __name__ == '__main__':
 
 
 
-#https://gist.github.com/zachguo/10296432
+# https://gist.github.com/zachguo/10296432
 # http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html
 # http://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_recall_fscore_support.html
