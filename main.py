@@ -15,14 +15,7 @@ from evaluation import *
 """
 
 # testing ot training, for serialization of GMM models
-executionMode = False
-
-
-def createListWithSpecificNumber(i, maxLen):
-    a = []
-    a = a + [i] * (maxLen - len(a))
-    return a
-
+executionMode = False #Flase means no training
 
 if __name__ == '__main__':
 
