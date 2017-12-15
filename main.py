@@ -15,22 +15,23 @@ from evaluation import *
 """
 
 # testing ot training, for serialization of GMM models
-executionMode = False #Flase means no training
-minNumOfGaussians = 50
-maxNumOfGaussians = 70
+trainingMode = False #Flase means no training
+minNumOfGaussians = 1
+maxNumOfGaussians = 10
 
 if __name__ == '__main__':
 
     warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
 
-    classes = getTrainingDataMFCCs(folerPath='.\\training_data')
 
     gmms = {}
-    if executionMode:
+    if trainingMode:
         count = 0
+        classes = getTrainingDataMFCCs(folerPath='.\\training_data')
         for classLabel, classData in classes.items():
-            gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData),minNumOfGaussians, maxNumOfGaussians )
-            pickle.dump(gmms, open('gmmModels/classesGMMs', 'wb'))
+            gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData),minNumOfGaussians, maxNumOfGaussians, count )
+            count += 1
+        pickle.dump(gmms, open('gmmModels/classesGMMs', 'wb'))
     else :
         gmms = pickle.load(open('gmmModels/classesGMMs', 'rb'))
 

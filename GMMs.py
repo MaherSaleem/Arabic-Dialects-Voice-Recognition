@@ -49,7 +49,9 @@ def make_ellipses(gmm, ax):
     (using the bic() method in GMM class). The returned value form method
     is the calculated GMM model.
 """
-def calcaulteGMMForEachClass(X, start=1, end=7) -> mixture.GaussianMixture:
+def calcaulteGMMForEachClass(X, start=1, end=7, classIndex=0) -> mixture.GaussianMixture:
+
+    print("The class %d is started training..." % classIndex)
     lowest_bic = np.infty
     bic = []
     best_gmm = []
@@ -75,7 +77,8 @@ def calcaulteGMMForEachClass(X, start=1, end=7) -> mixture.GaussianMixture:
                                   'darkorange'])
     clf = best_gmm
     bars = []
-
+    print("best number of components for this class is : ", best_component)
+    print("==="*20)
     # Plot the BIC scores
     spl = plt.subplot(2, 1, 1)
     for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
