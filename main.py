@@ -16,6 +16,8 @@ from evaluation import *
 
 # testing ot training, for serialization of GMM models
 executionMode = False #Flase means no training
+minNumOfGaussians = 50
+maxNumOfGaussians = 70
 
 if __name__ == '__main__':
 
@@ -27,7 +29,7 @@ if __name__ == '__main__':
     if executionMode:
         count = 0
         for classLabel, classData in classes.items():
-            gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData), 1, 10)
+            gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData),minNumOfGaussians, maxNumOfGaussians )
             pickle.dump(gmms, open('gmmModels/classesGMMs', 'wb'))
     else :
         gmms = pickle.load(open('gmmModels/classesGMMs', 'rb'))
