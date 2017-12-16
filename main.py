@@ -16,8 +16,8 @@ from evaluation import *
 
 # testing ot training, for serialization of GMM models
 trainingMode = False #Flase means no training
-minNumOfGaussians = 1
-maxNumOfGaussians = 10
+minNumOfGaussians = 64
+maxNumOfGaussians = 65
 
 if __name__ == '__main__':
 
