@@ -78,6 +78,7 @@ def calcaulteGMMForEachClass(X, start=1, end=7, classIndex=0) -> mixture.Gaussia
     clf = best_gmm
     bars = []
     print("best number of components for this class is : ", best_component)
+    print("best covariance type is for this class is : ", best_cv_type)
     print("==="*20)
     # Plot the BIC scores
     spl = plt.subplot(2, 1, 1)
