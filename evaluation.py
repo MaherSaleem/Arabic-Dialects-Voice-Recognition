@@ -1,11 +1,5 @@
-""""""
-"""
-    *************************************************************************
-    Evaluate the results of testing data using a confusion matrix
-    *************************************************************************
-"""
+    #Confusion matrix for the system classes
 def print_confusion_matrix(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
-
     """pretty print for confusion matrixes"""
     columnwidth = max([len(x) for x in labels] + [5])  # 5 is value length
     empty_cell = " " * columnwidth

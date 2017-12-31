@@ -1,16 +1,9 @@
 import os
 
-"""
-    ******************************************************************************
-    This class contains methods to handle loading of training and testing data-sets
-    ******************************************************************************
-"""
 
 
-"""
-    This function will return every class, and the the wav files related to it
-    as a dictionary (key is the path of the class, the value is list of files names)
-"""
+
+# Dictionary{classPath => list of files names}
 def getTrainingData(folerPath='.\\training_data'):
     rootDir = folerPath
 
@@ -26,10 +19,7 @@ def getTrainingData(folerPath='.\\training_data'):
 
 
 
-"""
-    This function will return every class, and the the wav files related to it
-    as a dictionary (key is the path of the class, the value is list of files names)
-"""
+# Dictionary{classPath => list of files names}
 def getTestingData(folerPath='.\\testing_data'):
     rootDir = folerPath
 

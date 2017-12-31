@@ -3,16 +3,10 @@ from sklearn.metrics import precision_recall_fscore_support
 import warnings
 import matplotlib.cbook
 import pickle
-
 from GMMs import *
 from MFCC import *
 from evaluation import *
 
-"""
-    *************************************************************************
-    Main entry class of the project
-    *************************************************************************
-"""
 
 # testing ot training, for serialization of GMM models
 trainingMode = False #Flase means no training

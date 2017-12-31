@@ -2,22 +2,10 @@ from python_speech_features import mfcc
 from python_speech_features import delta
 import scipy.io.wavfile as wav
 import numpy as np
-
-from handleDataset import *
-
-
-"""
-    *************************************************************************
-    This class contains methods to handle the generation of the MFCC features
-    *************************************************************************
-"""
+from DatasetHelpers import *
 
 
-"""
-    Generate the MFCCs feature vector from sound file. The feature vector is 39
-    in length for each frame. Containing MFCCs, delta MFCCs, delta-delta MFCCs
-    and energy of the frame. Frame size is 25ms and overlap between frames is 10ms.
-"""
+    #Generate the MFCCs feature vector from sound file
 def getMfccs(fileName):
     # reading the file
     (samplingRate, signalSamples) = wav.read(fileName)
@@ -38,10 +26,7 @@ def getMfccs(fileName):
     return allMfccs
 
 
-
-"""
-    Returns the MFCC feature vector for the training data files.
-"""
+    #Returns the MFCC feature vector for the training data files.
 def getTrainingDataMFCCs(folerPath='.\\training_data'):
     print('Reading training data ...')
     data = []
@@ -62,9 +47,7 @@ def getTrainingDataMFCCs(folerPath='.\\training_data'):
     return classes
 
 
-"""
-    Returns the MFCC feature vector for the testing data files.
-"""
+    #Returns the MFCC feature vector for the testing data files.
 def getTestingDataMFCCs(folerPath='.\\testing_data'):
     print('Reading testing data ...')
     classesWithMfcc = {}
