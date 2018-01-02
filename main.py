@@ -7,6 +7,7 @@ import pickle
 from GMMs import *
 from MFCC import *
 from evaluation import *
+import sys
 
 """
     *************************************************************************
@@ -16,14 +17,12 @@ from evaluation import *
 
 # testing ot training, for serialization of GMM models
 trainingMode = False #Flase means no training
-minNumOfGaussians = 1
-maxNumOfGaussians = 10
+minNumOfGaussians = 66
+maxNumOfGaussians = 68
 
 if __name__ == '__main__':
 
     warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation)
-
-
     gmms = {}
     if trainingMode:
         count = 0
@@ -31,9 +30,9 @@ if __name__ == '__main__':
         for classLabel, classData in classes.items():
             gmms[classLabel] = calcaulteGMMForEachClass(np.array(classData),minNumOfGaussians, maxNumOfGaussians, count )
             count += 1
-        pickle.dump(gmms, open('gmmModels/classesGMMs', 'wb'))
+        pickle.dump(gmms, open('gmmModels\classesGMMs', 'wb'))
     else :
-        gmms = pickle.load(open('gmmModels/classesGMMs', 'rb'))
+        gmms = pickle.load(open('gmmModels\classesGMMs', 'rb'))
 
 
     filesNames, testingDataMfcc = getTestingDataMFCCs(folerPath='.\\testing_data')
